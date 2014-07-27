@@ -20,6 +20,8 @@
 #include <getopt.h>
 #include <string.h>
 
+#include "nauty/nauty.h"
+
 #include "shared/multicode_base.h"
 #include "shared/multicode_input.h"
 #include "shared/multicode_output.h"

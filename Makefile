@@ -7,15 +7,18 @@ SOURCES = pancyclic.c shared/multicode_base.c shared/multicode_base.h\
 MULTICODE_SHARED = shared/multicode_base.c shared/multicode_input.c\
                    shared/multicode_output.c
 
+NAUTY_FILES = nauty/nauty.c nauty/nautil.c nauty/naugraph.c\
+              nauty/schreier.c nauty/naurng.c
+
 all: build/pancyclic
 
 clean:
 	rm -rf build
 	rm -rf dist
 
-build/pancyclic: pancyclic.c $(MULTICODE_SHARED)
+build/pancyclic: pancyclic.c $(MULTICODE_SHARED) $(NAUTY_FILES)
 	mkdir -p build
-	cc -o $@ -O4 -Wall $^
+	cc -o $@ -O4 -Wall -DMAXN=1000 $^
 
 sources: dist/pancyclic-sources.zip dist/pancyclic-sources.tar.gz
 

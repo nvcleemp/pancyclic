@@ -22,3 +22,6 @@
 
 # NetBeans folder
 /nbproject/
+
+#Nauty
+/nauty/
