@@ -30,7 +30,103 @@
 #include "shared/multicode_input.h"
 #include "shared/multicode_output.h"
 
-boolean isGraphPancyclic(){
+/* Nauty worksize */
+#define WORKSIZE 50 * MAXM
+
+/** Nauty variables */
+int lab[MAXN], ptn[MAXN], orbits[MAXN];
+static DEFAULTOPTIONS_GRAPH(options);
+statsblk stats;
+setword workspace[WORKSIZE];
+
+graph ng[MAXN*MAXM]; /* nauty graph datastructure */
+graph ng_canon[MAXN*MAXM]; /* nauty graph datastructur */
+
+permutation generators[MAXN+1][MAXN/2][MAXN];
+int generatorCount[MAXN+1];
+boolean generatorsDetermined[MAXN+1];
+
+int vertexCount = 0;
+int addedVerticesCount = 0;
+
+// debugging methods
+
+void printGenerators(int depth, int vertexCount){
+    int i, j;
+    fprintf(stderr, "Generators:\n");
+    for(i = 0; i < generatorCount[depth]; i++){
+        for(j = 0; j < vertexCount; j++){
+            fprintf(stderr, "%d ", generators[depth][i][j]);
+        }
+        fprintf(stderr, "\n");
+    }
+}
+
+// end debugging methods
+
+/**
+ * Method which is called each time nauty finds a generator.
+ */
+void storeGenerators(int count, permutation perm[], nvector orbits[], int numorbits, int stabvertex, int n) {
+    memcpy(generators[addedVerticesCount] + generatorCount[addedVerticesCount], perm, sizeof (permutation) * n);
+
+    generatorCount[addedVerticesCount]++;
+}
+
+void initNautyRelatedVariables(){
+    
+    options.getcanon = TRUE;
+    options.defaultptn = FALSE;
+    options.userautomproc = storeGenerators;
+
+}
+
+inline void prepareNautyCall(){
+    generatorCount[addedVerticesCount] = 0;
+}
+
+/* This method translates the internal data structure to nauty's dense graph
+ * data structure, so the graph can be passed to nauty.
+ */
+inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
+    int m, n, i, j;
+    
+    n = graph[0][0];
+    
+    if(n > MAXN/2){
+        fprintf(stderr, "We only support graphs with up to %d vertices - exiting!\n", MAXN/2);
+        exit(EXIT_FAILURE);
+    }
+    
+    m = SETWORDSNEEDED(2*n);
+    
+    nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
+    
+    EMPTYGRAPH(ng,m,n);
+    
+    for(i = 1; i <= graph[0][0]; i++){
+        for(j = 0; j < adj[i]; j++){
+            if(i < graph[i][j]){
+                ADDONEEDGE(ng, i - 1, graph[i][j] - 1, m);
+            }
+        }
+    }
+}
+
+void callNauty(){
+    
+    //call nauty
+    prepareNautyCall();
+    nauty((graph*) &ng, lab, ptn, NULL, orbits, &options, &stats, workspace, WORKSIZE, MAXM, vertexCount + addedVerticesCount, (graph*) &ng_canon);
+    
+    generatorsDetermined[addedVerticesCount] = TRUE;
+}
+
+boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
+    vertexCount = graph[0][0];
+    
+    translateGraphToNautyDenseGraph(graph, adj);
+    
     return FALSE;
 }
 
@@ -94,7 +190,7 @@ int main(int argc, char *argv[]) {
             }
         }
         
-        if(isGraphPancyclic()){
+        if(isGraphPancyclic(graph, adj)){
             
         }
     }
