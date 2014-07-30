@@ -30,6 +30,10 @@
 #include "shared/multicode_input.h"
 #include "shared/multicode_output.h"
 
+boolean isGraphPancyclic(){
+    return FALSE;
+}
+
 //====================== USAGE =======================
 
 void help(char *name) {
@@ -73,6 +77,27 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    GRAPH graph;
+    ADJACENCY adj;
+    int i;
+    
+    unsigned short code[MAXCODELENGTH];
+    int length;
+    while (readMultiCode(code, &length, stdin)) {
+        decodeMultiCode(code, length, graph, adj);
+        
+        //check that there are no vertices of degree 2
+        for(i = 1; i <= graph[0][0]; i++){
+            if(adj[i]==2){
+                fprintf(stderr, "Vertices of degree 2 are not supported -- exiting!\n");
+                return EXIT_FAILURE;
+            }
+        }
+        
+        if(isGraphPancyclic()){
+            
+        }
+    }
     
     return EXIT_SUCCESS;
 }
