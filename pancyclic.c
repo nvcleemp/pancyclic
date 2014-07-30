@@ -6,7 +6,11 @@
  */
 
 /* This program reads simple graphs from standard in and
- * checks whether they are pancyclic.
+ * checks whether they are pancyclic. This program is designed for large and dense
+ * graphs which have a large automorphism group. For small and sparse graphs or
+ * for graphs which have near-to-trivial symmetry, it might be faster to just
+ * generate all cycles.
+ * This program does not support graphs which contain vertices of degree 2.
  * 
  * 
  * Compile with:
