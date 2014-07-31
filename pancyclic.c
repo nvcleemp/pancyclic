@@ -253,6 +253,9 @@ void closeCycle(int endpoint1, int endpoint2){
 }
 
 void extendCycle(int endpoint1, int endpoint2){
+    int i, edgeCount = 0, edgeOrbitCount;
+    VERTEXPAIR edges[2*MAXN];
+    int edgeOrbits[2*MAXN];
     setword *gep1,*gep2;
     gep1 = GRAPHROW(ng, endpoint1, m);
     gep2 = GRAPHROW(ng, endpoint2, m);
@@ -265,11 +268,27 @@ void extendCycle(int endpoint1, int endpoint2){
     //make the other possible extensions
     if(!generatorsDetermined[addedVerticesCount]){
         //first call Nauty
+        callNauty();
     }
     
     //find all possible extensions
+    for (i = -1; (i = nextelement(gep1,m,i)) >= 0;){
+        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint2){
+            edges[edgeCount][0] = endpoint1;
+            edges[edgeCount][1] = i;
+            edgeCount++;
+        }
+    }
+    for (i = -1; (i = nextelement(gep2,m,i)) >= 0;){
+        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint1){
+            edges[edgeCount][0] = endpoint2;
+            edges[edgeCount][1] = i;
+            edgeCount++;
+        }
+    }
     
     //partition the extensions into orbits
+    determineEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
     
     //make the extensions
 }
