@@ -449,6 +449,9 @@ void startBuildingCycles(){
     //partition the edges into orbits
     determineGeneralEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
     
+    //clear set of vertices in the cycle
+    EMPTYSET(verticesInCycle, m);
+    
     //make the extensions
     for (i = 0; i < edgeCount; i++) {
         if(orbits[i]==i){
@@ -470,8 +473,6 @@ boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     vertexCount = graph[0][0];
     
     translateGraphToNautyDenseGraph(graph, adj);
-    
-    EMPTYSET(verticesInCycle, m);
     
     return FALSE;
 }
