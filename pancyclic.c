@@ -42,6 +42,8 @@ setword workspace[WORKSIZE];
 graph ng[MAXN*MAXM]; /* nauty graph datastructure */
 graph ng_canon[MAXN*MAXM]; /* nauty graph datastructur */
 
+set verticesInCycle[MAXM];
+
 permutation generators[MAXN+1][MAXN/2][MAXN];
 int generatorCount[MAXN+1];
 boolean generatorsDetermined[MAXN+1];
@@ -205,6 +207,8 @@ boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     vertexCount = graph[0][0];
     
     translateGraphToNautyDenseGraph(graph, adj);
+    
+    EMPTYSET(verticesInCycle, m);
     
     return FALSE;
 }
