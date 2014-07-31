@@ -243,16 +243,72 @@ void determineEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], i
     }
 }
 
+boolean isLastAddedEdgeCanonicalCycle(){
+    //at the moment we don't use colours: just call nauty and check that the
+    //last edge is in the orbit of the smallest edge
+    callNauty();
+    
+    int reverseLabelling[MAXN];
+    int i;
+    for (i = 0; i < vertexCount + addedVerticesCount; i++) {
+        reverseLabelling[lab[i]]=i;
+    }
+    
+    int lastEdgeVertex = vertexCount + addedVerticesCount - 1;
+    
+    int smallestLabelInOrbitLastEdge = reverseLabelling[lastEdgeVertex];
+    int smallestEdgeLabel = MAXN;
+    for(i = vertexCount; i < vertexCount + addedVerticesCount; i++){
+        if(orbits[i] == orbits[lastEdgeVertex]){
+            if(reverseLabelling[i] < smallestLabelInOrbitLastEdge){
+                smallestLabelInOrbitLastEdge = reverseLabelling[i];
+            } else if(reverseLabelling[i] < smallestEdgeLabel){
+                smallestEdgeLabel = reverseLabelling[i];
+            }
+        }
+    }
+    
+    if(smallestEdgeLabel < smallestLabelInOrbitLastEdge){
+        return FALSE;
+    } else {
+        return TRUE;
+    }
+}
+
+boolean isLastAddedEdgeCanonicalPath(int otherEndPoint){
+    //at the moment we don't use colours: just call nauty and check that the
+    //last edge is in the orbit of the smallest edge
+    callNauty();
+    
+    int reverseLabelling[MAXN];
+    int i;
+    for (i = 0; i < vertexCount + addedVerticesCount; i++) {
+        reverseLabelling[lab[i]]=i;
+    }
+    
+    int lastEdgeVertex = vertexCount + addedVerticesCount - 1;
+    
+    if(orbits[lastEdgeVertex] == orbits[otherEndPoint]){
+        //the two end edges are in the same orbit
+        return TRUE;
+    } else {
+        //if they are not in the same orbit, then they each form an orbit by themselves
+        return reverseLabelling[lastEdgeVertex] < reverseLabelling[otherEndPoint];
+    }
+}
+
 void closeCycle(int endpoint1, int endpoint2){
     addEdgeToCycle(endpoint1, endpoint2);
     
     //check that last edge was canonical
-    //handle graph
+    if(isLastAddedEdgeCanonicalCycle()){
+        //handle graph
+    }
     
     removeLastEdgeFromCycle(endpoint1, endpoint2);
 }
 
-void extendCycle(int endpoint1, int endpoint2){
+void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2){
     int i, edgeCount = 0, edgeOrbitCount;
     VERTEXPAIR edges[2*MAXN];
     int edgeOrbits[2*MAXN];
@@ -299,7 +355,19 @@ void extendCycle(int endpoint1, int endpoint2){
             ADDELEMENT(verticesInCycle, edges[i][1]);
             
             //check that last edge was canonical
-            //if yes: continue extending
+            if(edges[i][0]==endpoint1){
+                if(isLastAddedEdgeCanonicalPath(edgeVertex2)){
+                    //if yes: continue extending
+                    extendCycle(edges[i][1], vertexCount + addedVerticesCount - 1,
+                            endpoint2, edgeVertex2);
+                }
+            } else {
+                if(isLastAddedEdgeCanonicalPath(edgeVertex1)){
+                    //if yes: continue extending
+                    extendCycle(endpoint1, edgeVertex1,
+                            edges[i][1], vertexCount + addedVerticesCount - 1);
+                }
+            }
             
             DELELEMENT(verticesInCycle, edges[i][1]);
             removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
