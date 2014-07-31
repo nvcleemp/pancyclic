@@ -48,6 +48,7 @@ boolean generatorsDetermined[MAXN+1];
 
 int vertexCount = 0;
 int addedVerticesCount = 0;
+int m;
 
 // debugging methods
 
@@ -89,7 +90,7 @@ inline void prepareNautyCall(){
  * data structure, so the graph can be passed to nauty.
  */
 inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
-    int m, n, i, j;
+    int n, i, j;
     
     n = graph[0][0];
     //the largest graphs we can get contain 2*n vertices (i.e. if the graph is hamiltonian)
@@ -121,6 +122,28 @@ inline void callNauty(){
     nauty((graph*) &ng, lab, ptn, NULL, orbits, &options, &stats, workspace, WORKSIZE, MAXM, vertexCount + addedVerticesCount, (graph*) &ng_canon);
     
     generatorsDetermined[addedVerticesCount] = TRUE;
+}
+
+/**
+ * Adds the edge uv to the cycle. This method assumes that uv is an existing edge
+ * in the graph.
+ */
+inline void addEdgeToCycle(int u, int v){
+    setword *gu,*gv;
+    
+    //determine label of new vertex
+    int newVertex = vertexCount + addedVerticesCount;
+    addedVerticesCount++;
+    
+    //remove old edge
+    gu = GRAPHROW(ng, u, m);
+    gv = GRAPHROW(ng, v, m);
+    DELELEMENT(gu,v);
+    DELELEMENT(gv,u);
+    
+    //add two new edges
+    ADDONEEDGE(ng, u, newVertex, m);
+    ADDONEEDGE(ng, v, newVertex, m);
 }
 
 boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
