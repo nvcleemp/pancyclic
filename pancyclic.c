@@ -146,6 +146,30 @@ inline void addEdgeToCycle(int u, int v){
     ADDONEEDGE(ng, v, newVertex, m);
 }
 
+/**
+ * Removes the edge uv from the cycle. This assumes that uv was the last edge
+ * to be added to the cycle.
+ */
+inline void removeLastEdgeFromCycle(int u, int v){
+    setword *gu,*gv, *gn;
+    
+    //determine label of subdividing vertex
+    addedVerticesCount--;
+    int newVertex = vertexCount + addedVerticesCount;
+    
+    //remove subdivided edges
+    gu = GRAPHROW(ng, u, m);
+    gv = GRAPHROW(ng, v, m);
+    gn = GRAPHROW(newVertex, v, m);
+    DELELEMENT(gu,newVertex);
+    DELELEMENT(gv,newVertex);
+    DELELEMENT(gn,u);
+    DELELEMENT(gn,v);
+    
+    //add original edge
+    ADDONEEDGE(ng, u, v, m);
+}
+
 boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     vertexCount = graph[0][0];
     
