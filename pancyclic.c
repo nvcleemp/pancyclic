@@ -30,6 +30,8 @@
 #include "shared/multicode_input.h"
 #include "shared/multicode_output.h"
 
+typedef int VERTEXPAIR[2];
+
 /* Nauty worksize */
 #define WORKSIZE 50 * MAXM
 
@@ -44,7 +46,7 @@ graph ng_canon[MAXN*MAXM]; /* nauty graph datastructure */
 
 set verticesInCycle[MAXM];
 
-permutation generators[MAXN+1][MAXN/2][MAXN];
+int generators[MAXN+1][MAXN/2][MAXN];
 int generatorCount[MAXN+1];
 boolean generatorsDetermined[MAXN+1];
 
@@ -170,6 +172,75 @@ inline void removeLastEdgeFromCycle(int u, int v){
     
     //add original edge
     ADDONEEDGE(ng, u, v, m);
+}
+
+int findRootOfElement(int forest[], int element) {
+    //find with path-compression
+    if(element!=forest[element]){
+        forest[element]=findRootOfElement(forest, forest[element]);
+    }
+    return forest[element];
+}
+
+void unionElements(int forest[], int treeSizes[], int *numberOfComponents, int element1, int element2){
+    int root1 = findRootOfElement(forest, element1);
+    int root2 = findRootOfElement(forest, element2);
+
+    if(root1==root2) return;
+
+    if(treeSizes[root1]<treeSizes[root2]){
+        forest[root1]=root2;
+        treeSizes[root2]+=treeSizes[root1];
+    } else {
+        forest[root2]=root1;
+        treeSizes[root1]+=treeSizes[root2];
+    }
+    (*numberOfComponents)--;
+}
+
+void determineEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], int *orbitsCount) {
+    int i, j, k;
+    int orbitSize[edgesCount];
+
+    //initialization of the variables
+    for(i=0; i<edgesCount; i++){
+        edgeOrbits[i]=i;
+        orbitSize[i]=1;
+    }
+    *orbitsCount=edgesCount;
+
+    if(generatorCount[addedVerticesCount]==0){
+        //if the automorphism group is trivial
+        return;
+    }
+
+    int *permutation;
+    VERTEXPAIR edge;
+    
+    for(i = 0; i < generatorCount[addedVerticesCount]; i++) {
+        permutation = generators[addedVerticesCount][i];
+
+        for(j = 0; j<edgesCount; j++){
+            //apply permutation to current edge
+            edge[0] = permutation[edges[j][0]];
+            edge[1] = permutation[edges[j][1]];
+
+            //assert: edge[0] == endpoint1 or endpoint2
+
+            //search the pair in the list
+            for(k = 0; k<edgesCount; k++){
+                if(edge[0] == edges[k][0] && edge[1] == edges[k][1]){
+                    unionElements(edgeOrbits, orbitSize, orbitsCount, j, k);
+                    break; //the list of edges doesn't contain any duplicates so we can stop
+                }
+            }
+        }
+    }
+
+    //make sure that each element is connected to its root
+    for(i = 0; i < edgesCount; i++){
+        findRootOfElement(edgeOrbits, i);
+    }
 }
 
 void closeCycle(int endpoint1, int endpoint2){
