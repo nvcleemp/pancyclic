@@ -114,7 +114,7 @@ inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
     }
 }
 
-void callNauty(){
+inline void callNauty(){
     
     //call nauty
     prepareNautyCall();
