@@ -257,6 +257,8 @@ void extendCycle(int endpoint1, int endpoint2){
     VERTEXPAIR edges[2*MAXN];
     int edgeOrbits[2*MAXN];
     setword *gep1,*gep2;
+    
+    //load the neighbourhoods of the two endpoints
     gep1 = GRAPHROW(ng, endpoint1, m);
     gep2 = GRAPHROW(ng, endpoint2, m);
     
