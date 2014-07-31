@@ -40,7 +40,7 @@ statsblk stats;
 setword workspace[WORKSIZE];
 
 graph ng[MAXN*MAXM]; /* nauty graph datastructure */
-graph ng_canon[MAXN*MAXM]; /* nauty graph datastructur */
+graph ng_canon[MAXN*MAXM]; /* nauty graph datastructure */
 
 set verticesInCycle[MAXM];
 
