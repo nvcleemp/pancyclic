@@ -474,6 +474,8 @@ boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     
     translateGraphToNautyDenseGraph(graph, adj);
     
+    startBuildingCycles();
+    
     return FALSE;
 }
 
