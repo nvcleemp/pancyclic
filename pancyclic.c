@@ -170,6 +170,37 @@ inline void removeLastEdgeFromCycle(int u, int v){
     ADDONEEDGE(ng, u, v, m);
 }
 
+void closeCycle(int endpoint1, int endpoint2){
+    addEdgeToCycle(endpoint1, endpoint2);
+    
+    //check that last edge was canonical
+    //handle graph
+    
+    removeLastEdgeFromCycle(endpoint1, endpoint2);
+}
+
+void extendCycle(int endpoint1, int endpoint2){
+    setword *gep1,*gep2;
+    gep1 = GRAPHROW(ng, endpoint1, m);
+    gep2 = GRAPHROW(ng, endpoint2, m);
+    
+    //check whether we can close this cycle
+    if(ISELEMENT(gep1, endpoint2)){
+        closeCycle(endpoint1, endpoint2);
+    }
+    
+    //make the other possible extensions
+    if(!generatorsDetermined[addedVerticesCount]){
+        //first call Nauty
+    }
+    
+    //find all possible extensions
+    
+    //partition the extensions into orbits
+    
+    //make the extensions
+}
+
 boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     vertexCount = graph[0][0];
     
