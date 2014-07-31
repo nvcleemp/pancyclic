@@ -331,14 +331,14 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
     
     //find all possible extensions
     for (i = -1; (i = nextelement(gep1,m,i)) >= 0;){
-        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint2){
+        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint2 && i < vertexCount){
             edges[edgeCount][0] = endpoint1;
             edges[edgeCount][1] = i;
             edgeCount++;
         }
     }
     for (i = -1; (i = nextelement(gep2,m,i)) >= 0;){
-        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint1){
+        if((!ISELEMENT(verticesInCycle, i)) && i != endpoint1 && i < vertexCount){
             edges[edgeCount][0] = endpoint2;
             edges[edgeCount][1] = i;
             edgeCount++;
