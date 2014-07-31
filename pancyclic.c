@@ -243,6 +243,56 @@ void determineEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], i
     }
 }
 
+void determineGeneralEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], int *orbitsCount) {
+    int i, j, k, temp;
+    int orbitSize[edgesCount];
+
+    //initialization of the variables
+    for(i=0; i<edgesCount; i++){
+        edgeOrbits[i]=i;
+        orbitSize[i]=1;
+    }
+    *orbitsCount=edgesCount;
+
+    if(generatorCount[addedVerticesCount]==0){
+        //if the automorphism group is trivial
+        return;
+    }
+
+    int *permutation;
+    VERTEXPAIR edge;
+    
+    for(i = 0; i < generatorCount[addedVerticesCount]; i++) {
+        permutation = generators[addedVerticesCount][i];
+
+        for(j = 0; j<edgesCount; j++){
+            //apply permutation to current edge
+            edge[0] = permutation[edges[j][0]];
+            edge[1] = permutation[edges[j][1]];
+
+            //canonical form of edge
+            if(edge[0]>edge[1]){
+                temp = edge[1];
+                edge[1] = edge[0];
+                edge[0] = temp;
+            }
+
+            //search the pair in the list
+            for(k = 0; k<edgesCount; k++){
+                if(edge[0] == edges[k][0] && edge[1] == edges[k][1]){
+                    unionElements(edgeOrbits, orbitSize, orbitsCount, j, k);
+                    break; //the list of edges doesn't contain any duplicates so we can stop
+                }
+            }
+        }
+    }
+
+    //make sure that each element is connected to its root
+    for(i = 0; i < edgesCount; i++){
+        findRootOfElement(edgeOrbits, i);
+    }
+}
+
 boolean isLastAddedEdgeCanonicalCycle(){
     //at the moment we don't use colours: just call nauty and check that the
     //last edge is in the orbit of the smallest edge
@@ -369,6 +419,47 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
                 }
             }
             
+            DELELEMENT(verticesInCycle, edges[i][1]);
+            removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
+        }
+    }
+}
+
+void startBuildingCycles(){
+    int i, v, edgeCount = 0, edgeOrbitCount;
+    VERTEXPAIR edges[MAXN * (MAXN - 1)/2];
+    int edgeOrbits[MAXN * (MAXN - 1)/2];
+    setword *gv;
+    
+    //build a list of all edges
+    for(v = 0; v < vertexCount; v++){
+        gv = GRAPHROW(ng, v, m);
+        for (i = -1; (i = nextelement(gv,m,i)) >= 0;){
+            if(v < i){
+                edges[edgeCount][0] = v;
+                edges[edgeCount][1] = i;
+                edgeCount++;
+            }
+        }
+    }
+    
+    //call Nauty so we can build the orbits of edges
+    callNauty();
+    
+    //partition the edges into orbits
+    determineGeneralEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
+    
+    //make the extensions
+    for (i = 0; i < edgeCount; i++) {
+        if(orbits[i]==i){
+            addEdgeToCycle(edges[i][0], edges[i][1]);
+            ADDELEMENT(verticesInCycle, edges[i][0]);
+            ADDELEMENT(verticesInCycle, edges[i][1]);
+            
+            //a single edge is always canonical, so no canonicity check is needed
+            extendCycle(edges[i][0], vertexCount, edges[i][1], vertexCount);
+            
+            DELELEMENT(verticesInCycle, edges[i][0]);
             DELELEMENT(verticesInCycle, edges[i][1]);
             removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
         }
