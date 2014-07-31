@@ -293,6 +293,16 @@ void extendCycle(int endpoint1, int endpoint2){
     determineEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
     
     //make the extensions
+    for (i = 0; i < edgeCount; i++) {
+        if(orbits[i]==i){
+            addEdgeToCycle(edges[i][0], edges[i][1]);
+            
+            //check that last edge was canonical
+            //if yes: continue extending
+            
+            removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
+        }
+    }
 }
 
 boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
