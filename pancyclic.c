@@ -92,6 +92,7 @@ inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
     int m, n, i, j;
     
     n = graph[0][0];
+    //the largest graphs we can get contain 2*n vertices (i.e. if the graph is hamiltonian)
     
     if(n > MAXN/2){
         fprintf(stderr, "We only support graphs with up to %d vertices - exiting!\n", MAXN/2);
@@ -102,7 +103,7 @@ inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
     
     nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
     
-    EMPTYGRAPH(ng,m,n);
+    EMPTYGRAPH(ng,m,2*n);
     
     for(i = 1; i <= graph[0][0]; i++){
         for(j = 0; j < adj[i]; j++){
