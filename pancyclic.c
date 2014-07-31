@@ -296,10 +296,12 @@ void extendCycle(int endpoint1, int endpoint2){
     for (i = 0; i < edgeCount; i++) {
         if(orbits[i]==i){
             addEdgeToCycle(edges[i][0], edges[i][1]);
+            ADDELEMENT(verticesInCycle, edges[i][1]);
             
             //check that last edge was canonical
             //if yes: continue extending
             
+            DELELEMENT(verticesInCycle, edges[i][1]);
             removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
         }
     }
