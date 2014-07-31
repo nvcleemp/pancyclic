@@ -198,7 +198,7 @@ void unionElements(int forest[], int treeSizes[], int *numberOfComponents, int e
     (*numberOfComponents)--;
 }
 
-void determineEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], int *orbitsCount) {
+void determineExtensionEdgeOrbits(VERTEXPAIR edges[], int edgesCount, int edgeOrbits[], int *orbitsCount) {
     int i, j, k;
     int orbitSize[edgesCount];
 
@@ -396,7 +396,7 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
     }
     
     //partition the extensions into orbits
-    determineEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
+    determineExtensionEdgeOrbits(edges, edgeCount, edgeOrbits, &edgeOrbitCount);
     
     //make the extensions
     for (i = 0; i < edgeCount; i++) {
