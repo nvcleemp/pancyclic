@@ -476,6 +476,7 @@ void startBuildingCycles(){
 boolean isGraphPancyclic(GRAPH graph, ADJACENCY adj){
     vertexCount = graph[0][0];
     
+    initNautyRelatedVariables();
     translateGraphToNautyDenseGraph(graph, adj);
     
     startBuildingCycles();
