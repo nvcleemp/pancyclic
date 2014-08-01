@@ -368,12 +368,7 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
     gep1 = GRAPHROW(ng, endpoint1, m);
     gep2 = GRAPHROW(ng, endpoint2, m);
     
-    //check whether we can close this cycle
-    if(ISELEMENT(gep1, endpoint2)){
-        closeCycle(endpoint1, endpoint2);
-    }
-    
-    //make the other possible extensions
+    //make the possible extensions
     if(!generatorsDetermined[addedVerticesCount]){
         //first call Nauty
         callNauty();
@@ -422,6 +417,11 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
             DELELEMENT(verticesInCycle, edges[i][1]);
             removeLastEdgeFromCycle(edges[i][0], edges[i][1]);
         }
+    }
+    
+    //check whether we can close this cycle
+    if(ISELEMENT(gep1, endpoint2)){
+        closeCycle(endpoint1, endpoint2);
     }
 }
 
