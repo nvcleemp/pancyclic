@@ -46,6 +46,8 @@ graph ng_canon[MAXN*MAXM]; /* nauty graph datastructure */
 
 set verticesInCycle[MAXM];
 
+set cycleLengths[MAXM];
+
 int generators[MAXN+1][MAXN/2][MAXN];
 int generatorCount[MAXN+1];
 boolean generatorsDetermined[MAXN+1];
@@ -348,10 +350,14 @@ boolean isLastAddedEdgeCanonicalPath(int otherEndPoint){
 }
 
 void handleFinishedCycle(){
-
+    ADDELEMENT(cycleLengths, addedVerticesCount);
 }
 
 void closeCycle(int endpoint1, int endpoint2){
+    if(ISELEMENT(cycleLengths, addedVerticesCount + 1)){
+        //we already have that cycle length
+        return;
+    }
     addEdgeToCycle(endpoint1, endpoint2);
     
     //check that last edge was canonical
@@ -455,6 +461,7 @@ void startBuildingCycles(){
     
     //clear set of vertices in the cycle
     EMPTYSET(verticesInCycle, m);
+    EMPTYSET(cycleLengths, m);
     
     //make the extensions
     for (i = 0; i < edgeCount; i++) {
