@@ -399,7 +399,7 @@ void extendCycle(int endpoint1, int edgeVertex1, int endpoint2, int edgeVertex2)
     
     //make the extensions
     for (i = 0; i < edgeCount; i++) {
-        if(orbits[i]==i){
+        if(edgeOrbits[i]==i){
             addEdgeToCycle(edges[i][0], edges[i][1]);
             ADDELEMENT(verticesInCycle, edges[i][1]);
             
@@ -458,7 +458,7 @@ void startBuildingCycles(){
     
     //make the extensions
     for (i = 0; i < edgeCount; i++) {
-        if(orbits[i]==i){
+        if(edgeOrbits[i]==i){
             addEdgeToCycle(edges[i][0], edges[i][1]);
             ADDELEMENT(verticesInCycle, edges[i][0]);
             ADDELEMENT(verticesInCycle, edges[i][1]);
