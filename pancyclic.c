@@ -72,8 +72,8 @@ void printGenerators(int depth, int vertexCount){
 /**
  * Method which is called each time nauty finds a generator.
  */
-void storeGenerators(int count, permutation perm[], nvector orbits[], int numorbits, int stabvertex, int n) {
-    memcpy(generators[addedVerticesCount] + generatorCount[addedVerticesCount], perm, sizeof (permutation) * n);
+void storeGenerators(int count, int perm[], nvector orbits[], int numorbits, int stabvertex, int n) {
+    memcpy(generators[addedVerticesCount] + generatorCount[addedVerticesCount], perm, sizeof(int) * n);
 
     generatorCount[addedVerticesCount]++;
 }
