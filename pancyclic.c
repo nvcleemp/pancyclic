@@ -347,12 +347,16 @@ boolean isLastAddedEdgeCanonicalPath(int otherEndPoint){
     }
 }
 
+void handleFinishedCycle(){
+
+}
+
 void closeCycle(int endpoint1, int endpoint2){
     addEdgeToCycle(endpoint1, endpoint2);
     
     //check that last edge was canonical
     if(isLastAddedEdgeCanonicalCycle()){
-        //handle graph
+        handleFinishedCycle();
     }
     
     removeLastEdgeFromCycle(endpoint1, endpoint2);
