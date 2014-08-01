@@ -123,7 +123,7 @@ inline void callNauty(){
     
     //call nauty
     prepareNautyCall();
-    nauty((graph*) &ng, lab, ptn, NULL, orbits, &options, &stats, workspace, WORKSIZE, MAXM, vertexCount + addedVerticesCount, (graph*) &ng_canon);
+    nauty((graph*) &ng, lab, ptn, NULL, orbits, &options, &stats, workspace, WORKSIZE, m, vertexCount + addedVerticesCount, (graph*) &ng_canon);
     
     generatorsDetermined[addedVerticesCount] = TRUE;
 }
