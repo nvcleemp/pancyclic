@@ -164,7 +164,7 @@ inline void removeLastEdgeFromCycle(int u, int v){
     //remove subdivided edges
     gu = GRAPHROW(ng, u, m);
     gv = GRAPHROW(ng, v, m);
-    gn = GRAPHROW(newVertex, v, m);
+    gn = GRAPHROW(ng, newVertex, m);
     DELELEMENT(gu,newVertex);
     DELELEMENT(gv,newVertex);
     DELELEMENT(gn,u);
