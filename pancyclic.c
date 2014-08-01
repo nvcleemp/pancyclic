@@ -81,7 +81,7 @@ void storeGenerators(int count, permutation perm[], nvector orbits[], int numorb
 void initNautyRelatedVariables(){
     
     options.getcanon = TRUE;
-    options.defaultptn = FALSE;
+    options.defaultptn = TRUE;
     options.userautomproc = storeGenerators;
 
 }
